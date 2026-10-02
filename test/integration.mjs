@@ -216,11 +216,17 @@ async function main() {
 
       assert.equal(await f.faucet.availableClaims(), 5n);
       const recipient = await f.user.getAddress();
-      const nativeBefore = await provider.getBalance(recipient);
+      const beforeBlock = await provider.getBlockNumber();
+      const nativeBefore = await provider.getBalance(recipient, beforeBlock);
 
-      await (await f.faucet.connect(f.operator).claimFor(recipient)).wait();
+      const claimTx = await f.faucet.connect(f.operator).claimFor(recipient);
+      const claimReceipt = await claimTx.wait();
+      assert.ok(claimReceipt);
 
-      const nativeAfter = await provider.getBalance(recipient);
+      const nativeAfter = await provider.getBalance(
+        recipient,
+        claimReceipt.blockNumber
+      );
       assert.equal(nativeAfter - nativeBefore, parseEther("0.0005"));
       assert.equal(await f.tusdg.balanceOf(recipient), parseEther("10"));
       for (const token of f.stocks) {
