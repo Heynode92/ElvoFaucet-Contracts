@@ -48,6 +48,14 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Check Node scripts
+        shell: powershell
+        run: |
+          Get-ChildItem scripts -Filter *.mjs | ForEach-Object {
+            node --check $_.FullName
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
       - name: Compile
         run: npm run compile
 

@@ -17,7 +17,8 @@
     "deploy:preflight:testnet": "node --env-file=.env scripts/preflight-robinhood-testnet.mjs",
     "deploy:testnet": "npm run compile && node --env-file=.env scripts/deploy-robinhood-testnet.mjs",
     "verify:testnet": "npm run compile && node --env-file=.env scripts/verify-robinhood-testnet.mjs",
-    "redeploy:testnet": "npm run compile && node --env-file=.env scripts/deploy-robinhood-testnet.mjs --new-deployment"
+    "redeploy:testnet": "npm run compile && node --env-file=.env scripts/deploy-robinhood-testnet.mjs --new-deployment",
+    "fund:testnet": "node --env-file=.env scripts/fund-robinhood-testnet.mjs"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "5.6.1",
