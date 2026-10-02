@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { Contract, JsonRpcProvider, getAddress } from "ethers";
+import { Contract, JsonRpcProvider, getAddress, parseEther } from "ethers";
 import {
   CHAIN_ID,
+  PAYOUT,
   STOCK_TOKENS,
   TUSDG,
 } from "./robinhood-testnet-config.mjs";
@@ -47,7 +48,22 @@ async function main() {
     }
   }
 
-  const available = await faucet.availableClaims();
+  const [nativePayout, settlementPayout, stockPayout, available] = await Promise.all([
+    faucet.NATIVE_PAYOUT(),
+    faucet.TUSDG_PAYOUT(),
+    faucet.STOCK_PAYOUT(),
+    faucet.availableClaims(),
+  ]);
+
+  if (nativePayout !== parseEther(PAYOUT.nativeEth)) {
+    throw new Error("Native payout configuration mismatch");
+  }
+  if (settlementPayout !== parseEther(PAYOUT.tUSDG)) {
+    throw new Error("tUSDG payout configuration mismatch");
+  }
+  if (stockPayout !== parseEther(PAYOUT.stockEach)) {
+    throw new Error("Stock payout configuration mismatch");
+  }
 
   console.log(
     JSON.stringify(
@@ -56,6 +72,7 @@ async function main() {
         chainId: network.chainId.toString(),
         contractAddress: address,
         paused: await faucet.paused(),
+        payout: PAYOUT,
         availableClaims: available.toString(),
       },
       null,

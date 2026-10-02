@@ -91,7 +91,7 @@ async function verifyDeployment(provider, artifact, state, roles) {
   ]);
 
   if (
-    nativePayout !== 500000000000000n ||
+    nativePayout !== 100000000000000n ||
     settlementPayout !== 10000000000000000000n ||
     stockPayout !== 100000000000000000n
   ) {
@@ -101,7 +101,17 @@ async function verifyDeployment(provider, artifact, state, roles) {
   return address;
 }
 
+function parseDeploymentMode() {
+  const args = process.argv.slice(2);
+  const allowed = new Set(["--new-deployment"]);
+  for (const arg of args) {
+    if (!allowed.has(arg)) throw new Error("Unknown deployment argument: " + arg);
+  }
+  return { newDeployment: args.includes("--new-deployment") };
+}
+
 async function main() {
+  const mode = parseDeploymentMode();
   const preflight = await runPreflight();
   const rpcUrl = process.env.RH_TESTNET_RPC_URL.trim();
   const privateKey = process.env.DEPLOYER_PRIVATE_KEY.trim();
@@ -111,7 +121,7 @@ async function main() {
   const artifact = await readArtifact();
 
   const existing = await loadState();
-  if (existing) {
+  if (existing && !mode.newDeployment) {
     const address = await verifyDeployment(
       provider,
       artifact,
@@ -120,6 +130,14 @@ async function main() {
     );
     console.log("Existing deployment verified at " + address);
     return;
+  }
+
+  if (existing && mode.newDeployment) {
+    console.log(
+      "Explicit new deployment requested. Existing deployment " +
+        getAddress(existing.contractAddress) +
+        " will remain on-chain and will be superseded only after the new deployment verifies."
+    );
   }
 
   const factory = new ContractFactory(artifact.abi, artifact.bytecode, wallet);
@@ -160,6 +178,15 @@ async function main() {
       stocks: STOCK_TOKENS,
     },
     deployedAt: new Date().toISOString(),
+    ...(existing && mode.newDeployment
+      ? {
+          supersedes: {
+            contractAddress: getAddress(existing.contractAddress),
+            deploymentTransactionHash:
+              existing.deploymentTransactionHash ?? null,
+          },
+        }
+      : {}),
   };
 
   await mkdir(resolve("deployments"), { recursive: true });
