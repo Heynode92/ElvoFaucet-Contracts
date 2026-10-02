@@ -9,5 +9,3 @@ types/
 !.env.example
 .DS_Store
 *.log
-deployments/*.json
-!deployments/.gitkeep
