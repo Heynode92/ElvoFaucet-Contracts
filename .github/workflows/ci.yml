@@ -1,0 +1,58 @@
+name: Contracts CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contracts-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Compile, Test, Audit
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout trusted repository push
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          clean: true
+
+      - name: Verify runtime
+        shell: powershell
+        run: |
+          node --version
+          npm --version
+
+      - name: Reject tracked secret files
+        shell: powershell
+        run: |
+          $bad = git ls-files | Where-Object {
+            ($_ -match '(^|/)\.env($|\.)') -and ($_ -notmatch '(^|/)\.env\.example$')
+          }
+          if ($bad) {
+            Write-Error ("Tracked secret-like env files detected: " + ($bad -join ", "))
+            exit 1
+          }
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Integration tests
+        run: npm run test
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
