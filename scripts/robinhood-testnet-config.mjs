@@ -20,7 +20,7 @@ export const STOCK_TOKENS = Object.freeze([
 ]);
 
 export const PAYOUT = Object.freeze({
-  nativeEth: "0.0005",
+  nativeEth: "0.0001",
   tUSDG: "10",
   stockEach: "0.1",
 });

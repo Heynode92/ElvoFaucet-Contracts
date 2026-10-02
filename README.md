@@ -6,7 +6,7 @@ Gasless testnet asset distribution for Elvo Exchange on Robinhood Chain Testnet.
 
 One successful claim per wallet for the lifetime of the deployed distributor:
 
-- 0.0005 native ETH
+- 0.0001 native ETH
 - 10 tUSDG
 - 0.1 tNVDA
 - 0.1 tTSLA
@@ -69,6 +69,14 @@ Deploy only after preflight and CI are green:
 ~~~text
 npm run deploy:testnet
 ~~~
+
+For an intentional replacement deployment after changing immutable contract configuration, use:
+
+~~~text
+npm run redeploy:testnet
+~~~
+
+This explicit command deploys a new contract and records the previous contract in the new local deployment state. It does not modify the old on-chain deployment.
 
 After funding the deployed distributor, verify runtime state:
 

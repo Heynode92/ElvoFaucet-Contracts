@@ -22,7 +22,7 @@ contract ElvoFaucetDistributor is
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     uint48 public constant DEFAULT_ADMIN_TRANSFER_DELAY = 1 days;
-    uint256 public constant NATIVE_PAYOUT = 0.0005 ether;
+    uint256 public constant NATIVE_PAYOUT = 0.0001 ether;
     uint256 public constant TUSDG_PAYOUT = 10 ether;
     uint256 public constant STOCK_PAYOUT = 0.1 ether;
     uint256 public constant STOCK_TOKEN_COUNT = 10;

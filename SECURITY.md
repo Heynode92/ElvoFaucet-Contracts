@@ -22,7 +22,7 @@ The faucet never receives MINTER_ROLE for Elvo development assets. It distribute
 
 The V1 asset package is fixed at deployment:
 
-- 0.0005 native ETH
+- 0.0001 native ETH
 - 10 tUSDG
 - 0.1 each of the ten Elvo development stock tokens
 

@@ -143,7 +143,7 @@ async function fundFixture(fixture, claims = 5n) {
   await (
     await fixture.deployer.sendTransaction({
       to: faucetAddress,
-      value: parseEther("0.0005") * claims,
+      value: parseEther("0.0001") * claims,
     })
   ).wait();
 
@@ -191,7 +191,7 @@ async function main() {
     console.log("1/9 deployment configuration");
     {
       const f = await buildFixture(provider, artifacts);
-      assert.equal(await f.faucet.NATIVE_PAYOUT(), parseEther("0.0005"));
+      assert.equal(await f.faucet.NATIVE_PAYOUT(), parseEther("0.0001"));
       assert.equal(await f.faucet.TUSDG_PAYOUT(), parseEther("10"));
       assert.equal(await f.faucet.STOCK_PAYOUT(), parseEther("0.1"));
       assert.equal(await f.faucet.STOCK_TOKEN_COUNT(), 10n);
@@ -227,7 +227,7 @@ async function main() {
         recipient,
         claimReceipt.blockNumber
       );
-      assert.equal(nativeAfter - nativeBefore, parseEther("0.0005"));
+      assert.equal(nativeAfter - nativeBefore, parseEther("0.0001"));
       assert.equal(await f.tusdg.balanceOf(recipient), parseEther("10"));
       for (const token of f.stocks) {
         assert.equal(await token.balanceOf(recipient), parseEther("0.1"));
@@ -360,7 +360,7 @@ async function main() {
         () =>
           f.faucet
             .connect(f.deployer)
-            .recoverNative(recoveryAddress, parseEther("0.0005")),
+            .recoverNative(recoveryAddress, parseEther("0.0001")),
         "recovery while active must revert"
       );
 
