@@ -1,5 +1,6 @@
 export const CHAIN_ID = 46630n;
 export const NETWORK_NAME = "Robinhood Chain Testnet";
+export const TREASURY_ADDRESS = "0xe3388E157F8A995Df94c2b7772A147131652274D";
 
 export const TUSDG = {
   symbol: "tUSDG",

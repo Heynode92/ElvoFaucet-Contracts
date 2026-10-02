@@ -78,6 +78,24 @@ npm run redeploy:testnet
 
 This explicit command deploys a new contract and records the previous contract in the new local deployment state. It does not modify the old on-chain deployment.
 
+## Funding inventory
+
+Funding is performed from the canonical Elvo development treasury. The treasury private key must exist only in the local ignored `.env` as `TREASURY_PRIVATE_KEY`; never commit or share it.
+
+Preview a proportional inventory top-up for 100 additional claims:
+
+~~~text
+npm run fund:testnet -- --claims=100 --dry-run
+~~~
+
+After reviewing the plan, execute the top-up:
+
+~~~text
+npm run fund:testnet -- --claims=100 --confirm=ELVO_FAUCET_FUND
+~~~
+
+The script validates the network, treasury signer, active local deployment, on-chain faucet configuration, treasury balances, and gas budget. It then sends native ETH, tUSDG, and all ten stock assets sequentially and verifies that `availableClaims` increased by the requested number.
+
 After funding the deployed distributor, verify runtime state:
 
 ~~~text
